@@ -9,8 +9,8 @@ export default function App() {
     <ImageBackground source={require("./Images/ImageBg.jpg")}
       resizeMode="cover"
      style={styles.image}>
-       {/* <RegistrationScreen/> */}
-           <LoginScreen /> 
+      <RegistrationScreen/> 
+           {/* <LoginScreen />  */}
         <StatusBar style="auto" />
      </ImageBackground>
     
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
   image:{
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignContent: "center",
     
   },
