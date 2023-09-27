@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigation } from '@react-navigation/native';
 import {
   StyleSheet,
   TextInput,
@@ -10,7 +11,9 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  ImageBackground,
 } from "react-native";
+
 
 export default function RegistrationScreen() {
   const [onFocusLogin, setFocusLogin] = useState(false);
@@ -20,6 +23,10 @@ export default function RegistrationScreen() {
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+  const navigation = useNavigation();
+ 
 
   const onSubmit = () => {
     const inputValue = { login, email, password };
@@ -27,24 +34,31 @@ export default function RegistrationScreen() {
     setLogin("");
     setEmail("");
     setPassword("");
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    navigation.navigate('Home', {
+      screen: 'PostsScreen'
+   });
   };
+
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback 
+    onPress={() => {Keyboard.dismiss();
+    setIsShowKeyboard(false)}}>
       <View style={styles.container}>
+      <ImageBackground source={require("../Images/ImageBg.jpg")} style={styles.image} resizeMode="cover">
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
-          <View style={styles.imgBox}>
+         
             <Image style={styles.img} resizeMode="contain" />
             <TouchableOpacity style={styles.addBtn}>
               <Text style={styles.addBtnText}>+</Text>
             </TouchableOpacity>
-          </View>
-          <View style={styles.form}>
+         
+          <View style={{...styles.form, paddingBottom: isShowKeyboard ? 0 : 78}}>
             <Text style={styles.title}>Реєстрація</Text>
-            <KeyboardAvoidingView
-              behavior={Platform.OS == "ios" ? "padding" : "height"}
-            >
               <TextInput
                 style={{
                   ...styles.input,
@@ -54,6 +68,7 @@ export default function RegistrationScreen() {
                 value={login}
                 onFocus={() => {
                   setFocusLogin(true);
+                  setIsShowKeyboard(true);
                 }}
                 onBlur={() => {
                   setFocusLogin(false);
@@ -69,6 +84,7 @@ export default function RegistrationScreen() {
                 value={email}
                 onFocus={() => {
                   setFocusEmail(true);
+                  setIsShowKeyboard(true);
                 }}
                 onBlur={() => {
                   setFocusEmail(false);
@@ -86,6 +102,7 @@ export default function RegistrationScreen() {
                 secureTextEntry={showPpassword ? true : false}
                 onFocus={() => {
                   setFocusPassword(true);
+                  setIsShowKeyboard(true);
                 }}
                 onBlur={() => {
                   setFocusPassword(false);
@@ -105,32 +122,39 @@ export default function RegistrationScreen() {
               <TouchableOpacity style={styles.btn} onPress={onSubmit}>
                 <Text style={styles.btnTitle}>Зареєструватися</Text>
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7}>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate("Login")}>
                 <Text style={styles.linkText}>Вже є акаунт? Увійти</Text>
               </TouchableOpacity>
-            </KeyboardAvoidingView>
+            
           </View>
-        </KeyboardAvoidingView>
+         
+          </KeyboardAvoidingView>
+        </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    justifyContent: "flex-end",
+    flex: 1,
+      position: 'relative',
+      
+      
   },
-  form: {
-    alignItems: "stretch",
-    marginHorizontal: 16,
-    paddingBottom: 78,
-  },
+  image:{
+    flex: 1,
+    justifyContent: 'flex-end',
+      },
+      form: {
+        backgroundColor: '#fff',
+          paddingHorizontal: 16,
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,  
+          alignItems: "stretch",    
+      },
   title: {
     color: "black",
-    // marginTop: 92,
+    marginTop: 92,
     marginBottom: 32,
     fontSize: 30,
     lineHeight: 35,
@@ -166,8 +190,8 @@ const styles = StyleSheet.create({
 
   showBtn: {
     position: "absolute",
-    right: 16,
-    top: 149,
+    right: 32,
+    top: 308,
   },
   showBtnText: {
     fontSize: 16,
@@ -183,30 +207,29 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
   },
-  imgBox: {
-    marginLeft: "auto",
-    marginRight: "auto",
-    width: 120,
-  },
   img: {
-    marginTop: -60,
     width: 120,
     height: 120,
+    position: 'absolute',
+    alignSelf: 'center',
+    top: -60,
+    backgroundColor: '#F6F6F6',
     borderRadius: 16,
-    borderWidth: 1,
-    backgroundColor: "#F6F6F6",
     borderColor: "transparent",
+    zIndex: 10,
   },
   addBtn: {
-    marginLeft: "100%",
-    transform: [{ translateX: -12.5 }, { translateY: -40 }],
+    position: 'absolute',
     width: 25,
     height: 25,
+    left: 235,
+    top: 21,
     borderWidth: 1,
     borderRadius: 50,
     borderColor: "#FF6C00",
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 10,
   },
   addBtnText: {
     color: "#FF6C00",
