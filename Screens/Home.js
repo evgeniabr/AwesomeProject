@@ -1,6 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
@@ -15,26 +16,36 @@ const Tabs = createBottomTabNavigator();
 export default function Home() {
   const navigation = useNavigation();
 
+  const getTabBarStyle = (route) => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
+    let display = routeName === "Коментарі" ? "none" : "flex";
+    return { display };
+  };
+
   return (
     <Tabs.Navigator tabBarOptions={{ showLabel: false }}>
       <Tabs.Screen
         name="Публікації"
         component={PostsScreen}
-        options={{
-          tabBarIcon: ({size, color }) => (
+        options={({ route }) => ({
+          tabBarStyle: getTabBarStyle(route),
+          tabBarIcon: ({ size, color }) => (
             <Ionicons name="grid-outline" size={24} color="#212121CC" />
           ),
-          headerTitleAlign: "center",
+          headerShown: false,
+        })}
+      />
+      {/* headerTitleAlign: "center",
           headerTintColor: "#212121",
           headerRight: () => (
             <TouchableOpacity
               style={{ marginRight: 15 }}
             >
               <MaterialIcons name="logout" size={28} color="#BDBDBD" />
-            </TouchableOpacity>
-          ),
+            </TouchableOpacity> */}
+      {/* ),
         }}
-      />
+      /> */}
 
       <Tabs.Screen
         name="Створити публікацію"
@@ -56,8 +67,31 @@ export default function Home() {
           ),
           headerTitleAlign: "center",
           headerTintColor: "#212121",
+          headerTitleAlign: "center",
+          tabBarStyle: [{ display: "none" }],
+          headerLeft: () => (
+            <TouchableOpacity
+              style={{ marginLeft: 15 }}
+              onPress={() => navigation.navigate("Публікації")}
+            >
+              <Ionicons
+                name="ios-arrow-back-outline"
+                size={28}
+                color="#BDBDBD"
+              />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              style={{ marginRight: 15 }}
+              onPress={() => navigation.navigate("Login")}
+            >
+              <MaterialIcons name="logout" size={28} color="#BDBDBD" />
+            </TouchableOpacity>
+          ),
         }}
       />
+
       <Tabs.Screen
         name="Профіль"
         component={ProfileScreen}

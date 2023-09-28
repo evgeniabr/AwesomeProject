@@ -65,6 +65,7 @@ export default function RegistrationScreen() {
                   borderColor: onFocusLogin ? "#FF6C00" : "#E8E8E8",
                 }}
                 placeholder="Логін"
+                placeholderTextColor="#BDBDBD"
                 value={login}
                 onFocus={() => {
                   setFocusLogin(true);
@@ -81,6 +82,7 @@ export default function RegistrationScreen() {
                   borderColor: onFocusEmail ? "#FF6C00" : "#E8E8E8",
                 }}
                 placeholder="Адреса електронної пошти"
+                placeholderTextColor="#BDBDBD"
                 value={email}
                 onFocus={() => {
                   setFocusEmail(true);
@@ -98,6 +100,7 @@ export default function RegistrationScreen() {
                   borderColor: onFocusPassword ? "#FF6C00" : "#E8E8E8",
                 }}
                 placeholder="Пароль"
+                placeholderTextColor="#BDBDBD"
                 value={password}
                 secureTextEntry={showPpassword ? true : false}
                 onFocus={() => {
