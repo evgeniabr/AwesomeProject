@@ -29,7 +29,7 @@ export default function CreatePostsScreen() {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        console.log("Permission to access location was denied");
+        // console.log("Permission to access location was denied");
       }
     })();
   }, []);
@@ -42,11 +42,11 @@ export default function CreatePostsScreen() {
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
-    console.log("photo", photo);
+    // console.log("photo", photo);
 
     let location = await Location.getCurrentPositionAsync({});
-    console.log("latitude", location.coords.latitude);
-    console.log("longitude", location.coords.longitude);
+    // console.log("latitude", location.coords.latitude);
+    // console.log("longitude", location.coords.longitude);
     const coords = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,

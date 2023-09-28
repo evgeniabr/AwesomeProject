@@ -12,12 +12,12 @@ import { Feather } from "@expo/vector-icons";
 
 export default function DefoultPostsScreen({ route }) {
   const [posts, setPosts] = useState([]);
-  console.log("route", route.params);
+  // console.log("route", route.params);
 
   useEffect(() => {
     if (route.params) setPosts([...posts, route.params]);
   }, [route.params]);
-  console.log("posts", posts);
+  // console.log("posts", posts);
 
   const navigation = useNavigation();
 
