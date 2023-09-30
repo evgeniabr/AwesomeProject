@@ -35,17 +35,6 @@ export default function Home() {
           headerShown: false,
         })}
       />
-      {/* headerTitleAlign: "center",
-          headerTintColor: "#212121",
-          headerRight: () => (
-            <TouchableOpacity
-              style={{ marginRight: 15 }}
-            >
-              <MaterialIcons name="logout" size={28} color="#BDBDBD" />
-            </TouchableOpacity> */}
-      {/* ),
-        }}
-      /> */}
 
       <Tabs.Screen
         name="Створити публікацію"

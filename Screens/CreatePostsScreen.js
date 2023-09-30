@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 import {
   View,
   Text,
@@ -16,6 +17,9 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { db, storage } from "../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
 
 export default function CreatePostsScreen() {
   const [camera, setCamera] = useState(null);
@@ -24,6 +28,7 @@ export default function CreatePostsScreen() {
   const [locationCoords, setLocationCoords] = useState(null);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
+  const { userId, login, email } = useSelector((state) => state.auth);
 
   useEffect(() => {
     (async () => {
@@ -42,6 +47,7 @@ export default function CreatePostsScreen() {
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
+
     // console.log("photo", photo);
 
     let location = await Location.getCurrentPositionAsync({});
@@ -52,18 +58,54 @@ export default function CreatePostsScreen() {
       longitude: location.coords.longitude,
     };
     setLocationCoords(coords);
+    console.log("location----", locationCoords);
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+    const uniquePhotoId = Date.now().toString();
+    const path = `images/${uniquePhotoId}.jpeg`;
+    const storageRef = ref(storage, path);
+    const metadata = {
+      contentType: "image/jpeg",
+    };
+    await uploadBytes(storageRef, file, metadata);
+    const downloadPhoto = await getDownloadURL(storageRef);
+    return downloadPhoto;
+  };
+
+  const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToServer();
+
+    try {
+      await addDoc(collection(db, "posts"), {
+        name,
+        photo,
+
+        location,
+        locationCoords,
+        userId,
+        comments: [],
+        likes: 0,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   const onSubmit = () => {
     keyBoardHide();
+    uploadPostToServer();
     if (photo) {
-      navigation.navigate("DefoultPostsScreen", {
-        photo,
-        name,
-        location,
-        locationCoords,
-      });
-      setPhoto("");
+      navigation.navigate("DefoultPostsScreen"),
+        // {
+        //   photo,
+        //   name,
+        //   location,
+        //   locationCoords,
+        // });
+        setPhoto("");
       setName("");
       setLocation("");
     }

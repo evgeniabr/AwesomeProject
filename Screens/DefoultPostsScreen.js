@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import { useNavigation } from "@react-navigation/native";
 import {
   View,
@@ -9,14 +10,30 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { db } from "../firebase/config";
+import { collection, getDocs, doc } from "firebase/firestore";
 
-export default function DefoultPostsScreen({ route }) {
+export default function DefoultPostsScreen() {
   const [posts, setPosts] = useState([]);
   // console.log("route", route.params);
 
+  const getAllPosts = async () => {
+    try {
+      const allPosts = [];
+
+      const snapshot = await getDocs(collection(db, "posts"));
+
+      snapshot.forEach((doc) => allPosts.push({ ...doc.data(), id: doc.id }));
+
+      setPosts(allPosts);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    if (route.params) setPosts([...posts, route.params]);
-  }, [route.params]);
+    getAllPosts();
+  }, []);
   // console.log("posts", posts);
 
   const navigation = useNavigation();
@@ -29,6 +46,8 @@ export default function DefoultPostsScreen({ route }) {
         renderItem={({ item }) => {
           const name = item.name;
           const location = item.locationCoords;
+          const numberOfComments = item.comments.length;
+
           return (
             <View
               style={{
@@ -46,30 +65,39 @@ export default function DefoultPostsScreen({ route }) {
                 <TouchableOpacity
                   activeOpacity={0.7}
                   style={styles.button}
-                  onPress={() => navigation.navigate("Коментарі")}
+                  onPress={() =>
+                    navigation.navigate("Коментарі", {
+                      postId: item.id,
+                      photo: item.photo,
+                      comments: item.comments,
+                    })
+                  }
                 >
-                  <Feather name="message-circle" size={24} color="#BDBDBD" />
-
+                  <Feather
+                    name="message-circle"
+                    size={24}
+                    color={numberOfComments !== 0 ? "#FF6C00" : "#BDBDBD"}
+                  />
                   <Text
-                    style={{ color: "#BDBDBD", marginLeft: 5, fontSize: 16 }}
+                    style={{
+                      ...styles.commentText,
+                      color: numberOfComments !== 0 ? "#212121" : "#BDBDBD",
+                    }}
                   >
-                    0
+                    {numberOfComments || 0}
                   </Text>
                 </TouchableOpacity>
-                {item.location ? (
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    style={styles.button}
-                    onPress={() =>
-                      navigation.navigate("Локація", { name, location })
-                    }
-                  >
-                    <Feather name="map-pin" size={24} color="#BDBDBD" />
-                    <Text style={styles.locationText}>{item.location}</Text>
-                  </TouchableOpacity>
-                ) : (
-                  ""
-                )}
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.button}
+                  onPress={() =>
+                    navigation.navigate("Локація", { name, location })
+                  }
+                >
+                  <Feather name="map-pin" size={24} color="#BDBDBD" />
+                  <Text style={styles.locationText}>{item.location}</Text>
+                </TouchableOpacity>
               </View>
             </View>
           );
@@ -115,5 +143,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#212121",
     marginLeft: 4,
+  },
+  itemInfoButtonText: {
+    fontSize: 16,
   },
 });

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigation } from '@react-navigation/native';
+import { authSignUpUser } from "../redux/auth/authOperations";
+import { useDispatch, useSelector } from "react-redux";
 import {
   StyleSheet,
   TextInput,
@@ -25,6 +27,8 @@ export default function RegistrationScreen() {
   const [password, setPassword] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
+  const dispatch = useDispatch();
+
   const navigation = useNavigation();
  
 
@@ -36,9 +40,11 @@ export default function RegistrationScreen() {
     setPassword("");
     setIsShowKeyboard(false);
     Keyboard.dismiss();
+    dispatch(authSignUpUser(inputValue));
     navigation.navigate('Home', {
       screen: 'PostsScreen'
    });
+
   };
 
 
